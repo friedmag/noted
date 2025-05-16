@@ -77,8 +77,8 @@ help() {
 }
 
 loadProperties() {
-  if [[ -f "${CONFIG_FILE}" ]]; then
-    source "${CONFIG_FILE}"
+  if [[ -f "${NOTED_CONFIG_FILE}" ]]; then
+    source "${NOTED_CONFIG_FILE}"
   fi
 }
 
@@ -97,6 +97,8 @@ outputConfig() {
   echo "NOTED_TIMESTAMP_FORMAT=${NOTED_TIMESTAMP_FORMAT}"
   echo "NOTED_TEMPLATE_FILE=${NOTED_TEMPLATE_FILE:-<<DEFAULT>>}"
   echo "NOTED_TODO_MARKER=${NOTED_TODO_MARKER}"
+  echo
+  echo "These values can be set in: ${NOTED_CONFIG_FILE}"
 }
 
 validate() {
@@ -126,9 +128,8 @@ END_TEXT="[//]: # (end)"
 #
 # Default Settings
 #
-# Settings that cannot be overridden
 # Location of config file
-CONFIG_FILE=$HOME/.notedconfig
+[ -n "$NOTED_CONFIG_FILE" ] || NOTED_CONFIG_FILE=$HOME/.notedconfig
 
 # Settings that can be overridden from properties
 # name files like this
