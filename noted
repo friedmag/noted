@@ -97,6 +97,7 @@ outputConfig() {
   echo "NOTED_TIMESTAMP_FORMAT=${NOTED_TIMESTAMP_FORMAT}"
   echo "NOTED_TEMPLATE_FILE=${NOTED_TEMPLATE_FILE:-<<DEFAULT>>}"
   echo "NOTED_TODO_MARKER=${NOTED_TODO_MARKER}"
+  echo "NOTED_MULTIARG_MODE=${NOTED_MULTIARG_MODE}"
   echo
   echo "These values can be set in: ${NOTED_CONFIG_FILE}"
 }
@@ -140,6 +141,8 @@ NOTED_TEMPLATE_FILE=""
 # keep the directory where notes are stored here
 NOTED_MARKDOWN_HOME=$HOME/Documents/notes
 NOTED_TODO_MARKER="TODO"
+# Treat multiple arguments as a single message (disables specifying a file)
+NOTED_MULTIARG_MODE="false"
 
 #
 # Override with any additional settings
@@ -151,20 +154,21 @@ timestamp=$(date "${NOTED_TIMESTAMP_FORMAT}")
 
 todaysFile="${NOTED_MARKDOWN_HOME}/${currDate}.md"
 
-subcommand="$1"
+subcommand="$1"; shift || true
 if  [[ "${subcommand}" == "config" ]]; then
   outputConfig
 elif [[ "${subcommand}" == "version" ]]; then
   version
+elif [[ "${subcommand}" == "help" ]]; then
+  help
 elif [[ "${subcommand}" == "edit" ]] || [[ "${subcommand}" == "view" ]]; then
-  arg="$2"
+  arg="$1"; shift || true
   if [[ -z "${arg}" ]]; then
     arg="${currDate}"
   fi
   markdownFile "${arg}"
   edit "${markdownFile}"
 elif [[ "${subcommand}" == "grep" ]]; then
-  shift
   ngrep "$@"
 elif [[ "${subcommand}" == 'todos' ]]; then
   fgrep -rH "${NOTED_TODO_MARKER}" "${NOTED_MARKDOWN_HOME}" | fgrep -v ~~
@@ -193,14 +197,18 @@ else
   # create / default
   OPTIONAL_FILE=""
   OPTIONAL_NOTE=""
-  if [[ "${subcommand}" == "create" ]]; then
-    shift
+  # Allow specifying create explicitly
+  if [[ "${subcommand}" != "create" ]]; then
+    OPTIONAL_NOTE="${subcommand}"
   fi
-  if [[ -n "$1" ]]; then
-    OPTIONAL_NOTE="$1"
-  fi
-  if [[ -n "$2" ]]; then
-    OPTIONAL_FILE="$2"
+  if [ "${NOTED_MULTIARG_MODE}" == "true" ]; then
+    # Treat multiple arguments as a single message (disables specifying a file)
+    if [[ -n "$1" ]]; then
+      OPTIONAL_NOTE="$OPTIONAL_NOTE $*"
+    fi
+  else
+    # Enable specifying a file
+    OPTIONAL_FILE="$1"
   fi
   create "${OPTIONAL_NOTE}" "${OPTIONAL_FILE}"
 fi
