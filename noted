@@ -186,26 +186,79 @@ elif [[ "${subcommand}" == 'todos' ]]; then
   fgrep -rH "${NOTED_TODO_MARKER}" "${NOTED_MARKDOWN_HOME}" | fgrep -v ~~
   if [ 1 == $? ]; then echo "Congratulations! No TODOs found!"; fi
   echo
-elif [[ "${subcommand}" == "append" ]]; then
-  append "$@"
-elif [[ "${subcommand}" == "append-at" ]]; then
-  append "**$timestamp**" "$@"
 else
-  # create / default
-  OPTIONAL_FILE=""
-  OPTIONAL_NOTE=""
-  # Allow specifying create explicitly
-  if [[ "${subcommand}" != "create" ]]; then
-    OPTIONAL_NOTE="${subcommand}"
-  fi
-  if [ "${NOTED_MULTIARG_MODE}" == "true" ]; then
-    # Treat multiple arguments as a single message (disables specifying a file)
-    if [[ -n "$1" ]]; then
-      OPTIONAL_NOTE="$OPTIONAL_NOTE $*"
-    fi
-  else
-    # Enable specifying a file
-    OPTIONAL_FILE="$1"
-  fi
-  create "${OPTIONAL_NOTE}" "${OPTIONAL_FILE}"
+  case "${subcommand}" in
+    "edit-config" )
+      markdownFile="${NOTED_CONFIG_FILE}"
+      edit
+      ;;
+    "edit2-config" )
+      markdownFile="${NOTED_CONFIG_FILE}"
+      edit2
+      ;;
+    "append" )
+      append "$@"
+      ;;
+    "append-at" )
+      append "**$timestamp**" "$@"
+      ;;
+    "gl-todo" | "glt" )
+      if [ -z "$GITLAB_TOKEN" -o -z "$GITLAB_API_URL" -o -z "$NOTED_GITLAB_ISSUE_PROJECT_ID" ]; then
+        echo "GitLab variables missing:"
+        echo -e "\tGITLAB_TOKEN=$GITLAB_TOKEN"
+        echo -e "\tGITLAB_API_URL=$GITLAB_API_URL"
+        echo -e "\tNOTED_GITLAB_ISSUE_PROJECT_ID=$NOTED_GITLAB_ISSUE_PROJECT_ID"
+        echo "Please set all of these to create TODOs."
+        echo
+        echo "Also optionally set:"
+        echo -e "\tNOTED_GITLAB_ISSUE_LABELS=$NOTED_GITLAB_ISSUE_LABELS"
+        echo -e "\tNOTED_GITLAB_ISSUE_PREFIX=$NOTED_GITLAB_ISSUE_PREFIX"
+        exit 1
+      fi
+
+      if [ -z "$*" ]; then
+        echo "Please provide a title for the TODO."
+        exit 1
+      fi
+
+      echo "Creating GitLab TODO"
+      title="$*"
+      if [ -n "$NOTED_GITLAB_ISSUE_PREFIX" ]; then
+        title="$NOTED_GITLAB_ISSUE_PREFIX$title"
+      fi
+      curl -sf --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+           --header "Content-Type: application/json" \
+           --request POST \
+           --data '{"title": "'"$title"'", "labels": "'"$NOTED_GITLAB_ISSUE_LABELS"'"}' \
+           "$GITLAB_API_URL/projects/$NOTED_GITLAB_ISSUE_PROJECT_ID/issues" >temp.json
+
+      if which jq &>/dev/null; then
+        url="$(jq -r '.web_url' temp.json)"
+        echo "GitLab TODO created. URL: $url"
+      else
+        echo "GitLab TODO created. jq not installed, so not printing URL. See raw data:"
+        cat temp.json
+      fi
+      rm -f temp.json
+      ;;
+    *)
+      # create / default
+      OPTIONAL_FILE=""
+      OPTIONAL_NOTE=""
+      # Allow specifying create explicitly
+      if [[ "${subcommand}" != "create" ]]; then
+        OPTIONAL_NOTE="${subcommand}"
+      fi
+      if [ "${NOTED_MULTIARG_MODE}" == "true" ]; then
+        # Treat multiple arguments as a single message (disables specifying a file)
+        if [[ -n "$1" ]]; then
+          OPTIONAL_NOTE="$OPTIONAL_NOTE $*"
+        fi
+      else
+        # Enable specifying a file
+        OPTIONAL_FILE="$1"
+      fi
+      create "${OPTIONAL_NOTE}" "${OPTIONAL_FILE}"
+      ;;
+  esac
 fi
