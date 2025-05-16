@@ -2,7 +2,7 @@
 
 # noted
 
-_Lightweight CLI for taking markdown notes in a journal-like (time-seried) fashion on macOS._
+_Lightweight CLI for taking markdown notes in a journal-like (time-seried) fashion on macOS/Linux/WSL._
 
 ## Contents
 
