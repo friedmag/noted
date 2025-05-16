@@ -7,39 +7,74 @@ All uses of `noted` require a subcommand. If one is not supplied, the default `c
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [config](#config)
-  - [Synopsis](#synopsis)
-  - [Overview](#overview)
-  - [Arguments & Flags](#arguments--flags)
-  - [Examples](#examples)
-- [create](#create)
-  - [Synopsis](#synopsis-1)
-  - [Overview](#overview-1)
-  - [Arguments & Flags](#arguments--flags-1)
-  - [Examples](#examples-1)
-- [edit / view](#edit--view)
-  - [Synopsis](#synopsis-2)
-  - [Overview](#overview-2)
-  - [Arguments & Flags](#arguments--flags-2)
-  - [Examples](#examples-2)
-- [grep](#grep)
-  - [Synopsis](#synopsis-3)
-  - [Overview](#overview-3)
-  - [Arguments & Flags](#arguments--flags-3)
-  - [Examples](#examples-3)
-- [todos](#todos)
-  - [Synopsis](#synopsis-4)
-  - [Overview](#overview-4)
-  - [Arguments & Flags](#arguments--flags-4)
-  - [Examples](#examples-4)
-- [version](#version)
-  - [Synopsis](#synopsis-5)
-  - [Overview](#overview-5)
-  - [Arguments & Flags](#arguments--flags-5)
-  - [Examples](#examples-5)
+- [Subcommand reference](#subcommand-reference)
+  - [Contents](#contents)
+  - [append](#append)
+    - [Synopsis](#synopsis)
+    - [Overview](#overview)
+    - [Arguments \& Flags](#arguments--flags)
+    - [Examples](#examples)
+  - [config](#config)
+    - [Synopsis](#synopsis-1)
+    - [Overview](#overview-1)
+    - [Arguments \& Flags](#arguments--flags-1)
+    - [Examples](#examples-1)
+  - [create](#create)
+    - [Synopsis](#synopsis-2)
+    - [Overview](#overview-2)
+    - [Arguments \& Flags](#arguments--flags-2)
+    - [Examples](#examples-2)
+  - [edit / view](#edit--view)
+    - [Synopsis](#synopsis-3)
+    - [Overview](#overview-3)
+    - [Arguments \& Flags](#arguments--flags-3)
+    - [Examples](#examples-3)
+  - [grep](#grep)
+    - [Synopsis](#synopsis-4)
+    - [Overview](#overview-4)
+    - [Arguments \& Flags](#arguments--flags-4)
+    - [Examples](#examples-4)
+  - [todos](#todos)
+    - [Synopsis](#synopsis-5)
+    - [Overview](#overview-5)
+    - [Arguments \& Flags](#arguments--flags-5)
+    - [Examples](#examples-5)
+  - [version](#version)
+    - [Synopsis](#synopsis-6)
+    - [Overview](#overview-6)
+    - [Arguments \& Flags](#arguments--flags-6)
+    - [Examples](#examples-6)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
+## append
+
+Appends to a list within the current note entry.
+
+### Synopsis
+
+```shell
+noted append This is a new line in an unordered list
+noted append 'This is also fine!'
+```
+
+### Overview
+
+The append subcommand will:
+
+- Append to a list within the current note entry
+
+### Arguments & Flags
+
+The bullet item to add
+
+### Examples
+
+```shell
+noted append This is a new line in an unordered list
+noted append 'This is also fine!'
+```
 
 ## config
 
