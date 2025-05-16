@@ -47,14 +47,20 @@ EOF
 }
 
 edit() {
-  if which open &>/dev/null; then
+  if which open &>/dev/null && [ "$NOTED_DISABLE_OPEN" != "true" ]; then
     open "${markdownFile}"
+  elif [ -n "$VISUAL" ] && [ "$1" != "skip-visual" ]; then
+    $VISUAL "${markdownFile}"
   elif [ -n "$EDITOR" ]; then
     $EDITOR "${markdownFile}"
   else
     echo "No editor found. Please set the EDITOR environment variable."
     exit 1
   fi
+}
+
+edit2() {
+  edit "skip-visual"
 }
 
 help() {
@@ -146,13 +152,13 @@ elif [[ "${subcommand}" == "version" ]]; then
   version
 elif [[ "${subcommand}" == "help" ]]; then
   help
-elif [[ "${subcommand}" == "edit" ]] || [[ "${subcommand}" == "view" ]]; then
+elif [[ "${subcommand}" == "edit" ]] || [[ "${subcommand}" == "edit2" ]] || [[ "${subcommand}" == "view" ]]; then
   arg="$1"; shift || true
   if [[ -z "${arg}" ]]; then
     arg="${currDate}"
   fi
   markdownFile "${arg}"
-  edit "${markdownFile}"
+  $subcommand
 elif [[ "${subcommand}" == "grep" ]]; then
   ngrep "$@"
 elif [[ "${subcommand}" == 'todos' ]]; then
