@@ -6,21 +6,6 @@ set -eo pipefail
 # START FUNCTIONS (alphabetical order)
 #
 
-checkForEnvVariable() {
-  varval=${!1}
-  if [ ! "$(echo $varval)" ]; then
-    cat <<EOF
-
-ERROR
-
-    A required environment variable is not available:
-    $1
-
-EOF
-    exit 1
-  fi
-}
-
 create() {
   newEntry() {
     headerText="$@"
