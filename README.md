@@ -218,6 +218,16 @@ Besides supplying a custom configuration, you probably want to add the following
 | nv | Alias for `noted version`. |
 | nc | Alias for `noted config`. |
 
+Example:
+```bash
+NOTED=~/noted/noted
+n() { bash $NOTED "$@"; }
+ng() { n grep "$@"; }
+ne() { n edit; }
+nv() { n view; }
+na() { n append "$@"; }
+```
+
 ## Usage with a static site generator
 
 Some people may prefer to use `noted` with a static site generator like [mkdocs](https://www.mkdocs.org)
