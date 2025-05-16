@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 #
 # START FUNCTIONS (alphabetical order)
@@ -61,7 +61,18 @@ EOF
 }
 
 edit() {
-  open "${markdownFile}"
+  if which open &>/dev/null; then
+    open "${markdownFile}"
+  elif [ -n "$EDITOR" ]; then
+    $EDITOR "${markdownFile}"
+  else
+    echo "No editor found. Please set the EDITOR environment variable."
+    exit 1
+  fi
+}
+
+help() {
+  version
 }
 
 loadProperties() {

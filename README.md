@@ -223,7 +223,7 @@ Some people may prefer to use `noted` with a static site generator like [mkdocs]
 view your notes in HTML format locally.
 
 ## Change default editor
-`noted` used `open` command to edit a markdown file. Usually `open` command is an alias and can be changed using the following commands.
+`noted` used `open` command to edit a markdown file (it also falls back on the `EDITOR` environment variable). Usually `open` command is an alias and can be changed using the following commands.
 
 
 Add a new alternative to `open` command:
