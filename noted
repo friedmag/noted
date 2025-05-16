@@ -6,6 +6,27 @@ set -eo pipefail
 # START FUNCTIONS (alphabetical order)
 #
 
+append() {
+  markdownFile "${currDate}"
+  useText="- $*"
+  # Usage: insert_above_marker "$headerText" "$END_TEXT" "$file"
+  awk -v insert="$useText" -v marker="$END_TEXT" '
+    {
+      lines[NR] = $0
+    }
+    END {
+      for (i = 1; i <= NR; ++i) {
+        # If 1 line ahead is the marker, insert before printing this line
+        if ((i+1) <= NR && lines[i+1] == marker) {
+          print insert
+        }
+        print lines[i]
+      }
+    }
+  ' "${markdownFile}" > "${markdownFile}.tmp"
+  mv "${markdownFile}.tmp" "${markdownFile}"
+}
+
 create() {
   newEntry() {
     headerText="$@"
@@ -166,24 +187,9 @@ elif [[ "${subcommand}" == 'todos' ]]; then
   if [ 1 == $? ]; then echo "Congratulations! No TODOs found!"; fi
   echo
 elif [[ "${subcommand}" == "append" ]]; then
-  markdownFile "${currDate}"
-  useText="- $*"
-  # Usage: insert_above_marker "$headerText" "$END_TEXT" "$file"
-  awk -v insert="$useText" -v marker="$END_TEXT" '
-    {
-      lines[NR] = $0
-    }
-    END {
-      for (i = 1; i <= NR; ++i) {
-        # If 1 line ahead is the marker, insert before printing this line
-        if ((i+1) <= NR && lines[i+1] == marker) {
-          print insert
-        }
-        print lines[i]
-      }
-    }
-  ' "${markdownFile}" > "${markdownFile}.tmp"
-  mv "${markdownFile}.tmp" "${markdownFile}"
+  append "$@"
+elif [[ "${subcommand}" == "append-at" ]]; then
+  append "**$timestamp**" "$@"
 else
   # create / default
   OPTIONAL_FILE=""
