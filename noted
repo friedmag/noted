@@ -58,7 +58,7 @@ EOF
     markdownFile="${NOTED_MARKDOWN_HOME}/${OPTIONAL_FILE}"
   fi
   touch "${markdownFile}"
-  grep -Fv "${END_TEXT}" "${markdownFile}" >"${markdownFile}.tmp"
+  grep -Fv "${END_TEXT}" "${markdownFile}" >"${markdownFile}.tmp" || true
   newEntry "${OPTIONAL_NOTE}" >>"${markdownFile}.tmp"
   mv "${markdownFile}.tmp" "${markdownFile}"
   if [ -z "${OPTIONAL_NOTE}" ]; then
